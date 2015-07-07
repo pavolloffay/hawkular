@@ -392,6 +392,12 @@
                       timeUnits="minutes"
                       path="/core-service=platform-mbean/type=memory"
                       attribute="non-heap-memory-usage#committed" />
+          <metric-dmr name="Accumulated GC Duration"
+                      metricType="counter"
+                      interval="1"
+                      timeUnits="minutes"
+                      path="/core-service=platform-mbean/type=garbage-collector/name=*"
+                      attribute="collection-time" />
         </metric-set-dmr>
 
         <metric-set-dmr name="WildFly Threading Metrics" enabled="true">
@@ -410,16 +416,19 @@
                       path="/subsystem=undertow"
                       attribute="active-sessions" />
           <metric-dmr name="Sessions Created"
+                      metricType="counter"
                       interval="2"
                       timeUnits="minutes"
                       path="/subsystem=undertow"
                       attribute="sessions-created" />
           <metric-dmr name="Expired Sessions"
+                      metricType="counter"
                       interval="2"
                       timeUnits="minutes"
                       path="/subsystem=undertow"
                       attribute="expired-sessions" />
           <metric-dmr name="Rejected Sessions"
+                      metricType="counter"
                       interval="2"
                       timeUnits="minutes"
                       path="/subsystem=undertow"
