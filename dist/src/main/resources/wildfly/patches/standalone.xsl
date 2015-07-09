@@ -185,6 +185,9 @@
           <admin-object use-java-context="true" enabled="true" class-name="org.apache.activemq.command.ActiveMQTopic" jndi-name="java:/topic/HawkularAvailData" pool-name="HawkularAvailData">
              <config-property name="PhysicalName">HawkularAvailData</config-property>
           </admin-object>
+          <admin-object use-java-context="true" enabled="true" class-name="org.apache.activemq.command.ActiveMQTopic" jndi-name="java:/topic/HawkularAccountsEvents" pool-name="HawkularAccountsEvents">
+             <config-property name="PhysicalName">HawkularAccountsEvents</config-property>
+          </admin-object>
         </admin-objects>
       </resource-adapter>
     </resource-adapters>
@@ -297,6 +300,10 @@
         <xsl:attribute name="name">hawkular.metrics.waitForService</xsl:attribute>
         <xsl:attribute name="value">&#36;{hawkular.metrics.waitForService:True}</xsl:attribute>
       </property>
+      <property>
+        <xsl:attribute name="name">hawkular.events.listener.rest.endpoint</xsl:attribute>
+        <xsl:attribute name="value">http://&#36;{jboss.bind.address:127.0.0.1}:&#36;{jboss.http.port:8080}/hawkular-accounts-events-backend/events</xsl:attribute>
+      </property>
       <xsl:choose>
         <xsl:when test="$kettle.build.type='dev'">
         <property>
@@ -378,7 +385,7 @@
                       path="/core-service=platform-mbean/type=memory"
                       attribute="heap-memory-usage#committed" />
           <metric-dmr name="Heap Max"
-                      interval="5"
+                      interval="1"
                       timeUnits="minutes"
                       path="/core-service=platform-mbean/type=memory"
                       attribute="heap-memory-usage#max" />
@@ -623,22 +630,22 @@
                       path="/statistics=pool"
                       attribute="ActiveCount" />
           <metric-dmr name="Available Count"
-                      interval="10"
+                      interval="1"
                       timeUnits="minutes"
                       path="/statistics=pool"
                       attribute="AvailableCount" />
           <metric-dmr name="Average Blocking Time"
-                      interval="10"
+                      interval="1"
                       timeUnits="minutes"
                       path="/statistics=pool"
                       attribute="AverageBlockingTime" />
           <metric-dmr name="Average Creation Time"
-                      interval="10"
+                      interval="1"
                       timeUnits="minutes"
                       path="/statistics=pool"
                       attribute="AverageCreationTime" />
           <metric-dmr name="Average Get Time"
-                      interval="10"
+                      interval="1"
                       timeUnits="minutes"
                       path="/statistics=pool"
                       attribute="AverageGetTime" />
@@ -663,7 +670,7 @@
                       path="/statistics=pool"
                       attribute="IdleCount" />
           <metric-dmr name="In Use Count"
-                      interval="10"
+                      interval="1"
                       timeUnits="minutes"
                       path="/statistics=pool"
                       attribute="InUseCount" />
@@ -693,7 +700,7 @@
                       path="/statistics=pool"
                       attribute="MaxWaitTime" />
           <metric-dmr name="Timed Out"
-                      interval="10"
+                      interval="1"
                       timeUnits="minutes"
                       path="/statistics=pool"
                       attribute="TimedOut" />
