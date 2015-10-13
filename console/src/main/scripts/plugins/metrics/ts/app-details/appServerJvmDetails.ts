@@ -31,7 +31,7 @@ module HawkularMetrics {
     /// this is for minification purposes
     public static $inject = ['$location', '$scope', '$rootScope', '$interval', '$log', '$filter', '$routeParams',
       '$modal', 'HawkularInventory', 'HawkularMetric','HawkularNav', 'HawkularAlertsManager',
-      'MetricsService', 'ErrorsManager', '$q', ];
+      'MetricsService', 'ErrorsManager', '$q', 'HawkularDatamining'];
 
     public static USED_COLOR = '#1884c7'; /// blue
     public static MAXIMUM_COLOR = '#f57f20'; /// orange
@@ -68,7 +68,8 @@ module HawkularMetrics {
                 private HawkularAlertsManager:IHawkularAlertsManager,
                 private MetricsService:IMetricsService,
                 private ErrorsManager:IErrorsManager,
-                private $q:ng.IQService ) {
+                private $q:ng.IQService,
+                private HawkularDatamining: any) {
       $scope.vm = this;
 
       this.resourceId = this.$routeParams.resourceId;
@@ -221,6 +222,37 @@ module HawkularMetrics {
           };
         });
       }
+
+
+      /**
+       * get predicted data
+       */
+      if (!this.skipChartData['Heap Used Forecast']) {
+        let hUsedPredictPromise = this.HawkularDatamining.Predict(this.$rootScope.currentPersona.id).predict({
+          metricId: 'MI~R~[' + this.$routeParams.resourceId + '~~]~MT~WildFly Memory Metrics~Heap Used',
+          ahead: 2
+        }).$promise;
+      heapPromises.push(hUsedPredictPromise);
+      hUsedPredictPromise.then((data) => {
+          // todo remove
+          console.log('Predicted data');
+          console.log(data);
+          console.log('startTimestamp = ' + this.startTimeStamp + ' -> ' + (new Date(this.startTimeStamp)));
+          console.log('endTimestamp = ' + this.endTimeStamp + ' -> ' + (new Date(this.endTimeStamp)));
+
+          _.map(data.points, (point: any) => {
+            console.log('timestamp = ' + (new Date(point.timestamp)) + ' value = ' + point.value);
+          });
+
+          tmpChartHeapData[tmpChartHeapData.length] = {
+            key: 'Predicted Heap Usage',
+            color: '#FFFF60',
+            values: this.HawkularDatamining.formatPredictedData(data)
+          };
+        });
+      }
+
+
       this.$q.all(heapPromises).finally(()=> {
         this.chartHeapData = tmpChartHeapData;
       });
